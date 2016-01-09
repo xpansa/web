@@ -58,7 +58,7 @@ Copyright, Author and Licence:
         'web',
     ],
     'data': [
-        'view/res_users_view.xml',
+        'views/res_users_view.xml',
     ],
     'qweb': [
         'static/src/xml/switch_company.xml',
