@@ -16,6 +16,15 @@ odoo.define('web_widget_color.widget', function(require) {
     var FieldColor = FieldChar.extend({
         template: 'FieldColor',
         className: 'oe_form_field_color',
+        events: {
+            // init jscolor on color field mouseover event
+            // to workaround a binding issue
+            // when fields are not on the document yet;
+            // field binds only on first mouseover
+            'mouseover': function (e) {
+                jscolor.init();
+            },
+        },
         is_syntax_valid: function() {
             var $input = this.$('input');
             if (!this.get("effective_readonly") && $input.size() > 0) {
@@ -39,7 +48,6 @@ odoo.define('web_widget_color.widget', function(require) {
                 var $input = this.$el.find('input');
                 $input.val(show_value);
                 $input.css("background-color", show_value);
-                jscolor.init();
             } else {
                 this.$(".oe_form_char_content").text(show_value);
                 this.$('div').css("background-color", show_value);
@@ -48,18 +56,5 @@ odoo.define('web_widget_color.widget', function(require) {
 
     });
     core.form_widget_registry.add('color', FieldColor);
-
-    /*
-     * Init jscolor for each editable mode on view form
-     */
-    // var FormView = core.view_registry.get('form');
-    // FormView = FormView.extend({
-    //     to_edit_mode: function () {
-    //         console.log('here')
-    //         this._super();
-    //         jscolor.init();
-    //     }
-    // });
-    // core.view_registry.add('form', FormView);
 
 });
