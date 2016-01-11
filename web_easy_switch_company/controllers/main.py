@@ -20,19 +20,19 @@
 #
 #############################################################################
 import openerp
-import openerp.http as http
-from openerp.http import request
+from openerp import api
+from openerp.http import Controller, request, route
 
 
-class WebEasySwitchCompanyController(http.Controller):
-    @http.route(
+class ControllerName(Controller):
+
+    @route(
         '/web_easy_switch_company/switch/change_current_company',
-        type='json', auth='none')
+        type='json', auth='user')
     def change_current_company(self, company_id):
-        registry = openerp.modules.registry.RegistryManager.get(
-            request.session.db)
-        uid = request.session.uid
-        with registry.cursor() as cr:
-            res = registry.get("res.users").change_current_company(
-                cr, uid, company_id)
-            return res
+        with openerp.api.Environment.manage():
+            with openerp.registry(request.env.cr.dbname).cursor() as new_cr:
+                new_env = api.Environment(
+                    new_cr, request.env.uid, request.env.context)
+                return request.env['res.users'].with_env(
+                    new_env).change_current_company(company_id)

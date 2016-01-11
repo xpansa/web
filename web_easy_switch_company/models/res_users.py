@@ -20,12 +20,13 @@
 #
 ##############################################################################
 
-from openerp.osv.orm import Model
+from openerp import models
 
 
-class res_users(Model):
+class ResUsers(models.Model):
+
     _inherit = 'res.users'
 
     # Custom Function Section
-    def change_current_company(self, cr, uid, company_id, context=None):
-        return self.write(cr, uid, uid, {'company_id': company_id})
+    def change_current_company(self, company_id):
+        self.env.user.company_id = company_id
