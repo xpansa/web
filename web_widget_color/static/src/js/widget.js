@@ -1,7 +1,11 @@
-openerp.web_widget_color = function (instance) {
+odoo.define('web_widget_color.widget', function(require) {
+    'use strict';
+
+    var core = require('web.core');
+    var FieldChar = require('web.form_widgets').FieldChar;
 
     var _super_getDir = jscolor.getDir.prototype;
-    jscolor.getDir = function () {
+    jscolor.getDir = function() {
         var dir = _super_getDir.constructor();
         if (dir.indexOf('web_widget_color') === -1) {
             jscolor.dir = 'web_widget_color/static/lib/jscolor/';
@@ -9,14 +13,10 @@ openerp.web_widget_color = function (instance) {
         return jscolor.dir;
     };
 
-    instance.web.form.widgets.add('color', 'instance.web.form.FieldColor');
-
-    instance.web.search.fields.add('color', 'instance.web.search.CharField');
-
-    instance.web.form.FieldColor = instance.web.form.FieldChar.extend({
+    var FieldColor = FieldChar.extend({
         template: 'FieldColor',
-        widget_class: 'oe_form_field_color',
-        is_syntax_valid: function () {
+        className: 'oe_form_field_color',
+        is_syntax_valid: function() {
             var $input = this.$('input');
             if (!this.get("effective_readonly") && $input.size() > 0) {
                 var val = $input.val();
@@ -33,27 +33,33 @@ openerp.web_widget_color = function (instance) {
             }
             return true;
         },
-        render_value: function () {
+        render_value: function() {
             var show_value = this.format_value(this.get('value'), '');
             if (!this.get("effective_readonly")) {
                 var $input = this.$el.find('input');
                 $input.val(show_value);
-                $input.css("background-color", show_value)
-                jscolor.init(this.$el[0]);
+                $input.css("background-color", show_value);
+                jscolor.init();
             } else {
                 this.$(".oe_form_char_content").text(show_value);
-                this.$('div').css("background-color", show_value)
+                this.$('div').css("background-color", show_value);
             }
         }
+
     });
+    core.form_widget_registry.add('color', FieldColor);
 
     /*
      * Init jscolor for each editable mode on view form
      */
-    instance.web.FormView.include({
-        to_edit_mode: function () {
-            this._super();
-            jscolor.init(this.$el[0]);
-        }
-    });
-};
+    // var FormView = core.view_registry.get('form');
+    // FormView = FormView.extend({
+    //     to_edit_mode: function () {
+    //         console.log('here')
+    //         this._super();
+    //         jscolor.init();
+    //     }
+    // });
+    // core.view_registry.add('form', FormView);
+
+});
